@@ -21,7 +21,7 @@ const CryptoBoxes = () => {
     return new Intl.DateTimeFormat(
       settings.language === 'ru' ? 'ru-RU' : 'en-US', 
       options
-    ).format(date);
+    ).format(new Date(date));
   };
   
   // Get account name by ID
@@ -84,7 +84,7 @@ const CryptoBoxes = () => {
                 </span>
                 <span className="flex items-center gap-1">
                   <Calendar size={12} />
-                  {formatDate(new Date(box.timestamp))}
+                  {formatDate(box.timestamp)}
                 </span>
               </div>
             </div>

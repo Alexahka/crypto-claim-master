@@ -22,12 +22,14 @@ const AppContent = () => {
         const randomCoin = coins[Math.floor(Math.random() * coins.length)];
         const randomAmount = (Math.random() * 0.1).toFixed(6);
         
+        console.log('Generating demo cryptobox:', randomCoin, randomAmount, randomAccount.id);
+        
         addCryptoBox({
           coinName: randomCoin,
           amount: parseFloat(randomAmount),
           accountId: randomAccount.id
         });
-      }, 20000); // Every 20 seconds
+      }, 10000); // Изменено с 20000 на 10000 мс для более быстрой демонстрации
       
       return () => clearInterval(demoInterval);
     }
