@@ -10,9 +10,6 @@ import Dashboard from '@/components/Dashboard';
 // Framer Motion for React is needed for animations
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Add framer-motion package
-import { lov-add-dependency } from 'lovable-dev';
-
 const AppContent = () => {
   const { currentState } = useApp();
   
@@ -46,7 +43,3 @@ const Index = () => {
 };
 
 export default Index;
-</lov-add-dependency>
-
-Let's install the necessary framer-motion package:
-<lov-add-dependency>framer-motion@latest</lov-add-dependency>
