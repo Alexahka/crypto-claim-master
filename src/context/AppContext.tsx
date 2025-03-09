@@ -28,6 +28,14 @@ type LogEntry = {
   channelId?: string;
 };
 
+type CryptoBox = {
+  id: string;
+  timestamp: Date;
+  coinName: string;
+  amount: number;
+  accountId: string;
+};
+
 type Settings = {
   language: "ru" | "en";
   soundEnabled: boolean;
@@ -53,6 +61,8 @@ interface AppContextType {
   updateSettings: (settings: Partial<Settings>) => void;
   isRunning: boolean;
   toggleRunning: () => void;
+  cryptoBoxes: CryptoBox[];
+  addCryptoBox: (cryptoBox: Omit<CryptoBox, "id" | "timestamp">) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -63,6 +73,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [channels, setChannels] = useState<Channel[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [cryptoBoxes, setCryptoBoxes] = useState<CryptoBox[]>([]);
   const [settings, setSettings] = useState<Settings>({
     language: "ru",
     soundEnabled: true,
@@ -77,6 +88,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const loadedChannels = localStorage.getItem("channels");
     const loadedSettings = localStorage.getItem("settings");
     const loadedLogs = localStorage.getItem("logs");
+    const loadedCryptoBoxes = localStorage.getItem("cryptoBoxes");
 
     if (loadedAccounts) {
       setAccounts(JSON.parse(loadedAccounts));
@@ -89,6 +101,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     if (loadedLogs) {
       setLogs(JSON.parse(loadedLogs));
+    }
+    if (loadedCryptoBoxes) {
+      setCryptoBoxes(JSON.parse(loadedCryptoBoxes));
     }
   }, []);
 
@@ -108,6 +123,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem("logs", JSON.stringify(logs.slice(-100))); // Keep only last 100 logs
   }, [logs]);
+
+  useEffect(() => {
+    localStorage.setItem("cryptoBoxes", JSON.stringify(cryptoBoxes.slice(-50))); // Keep only last 50 crypto boxes
+  }, [cryptoBoxes]);
 
   // Determine the initial app state based on setup progress
   useEffect(() => {
@@ -237,6 +256,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
+  const addCryptoBox = (cryptoBox: Omit<CryptoBox, "id" | "timestamp">) => {
+    const newCryptoBox = {
+      ...cryptoBox,
+      id: `box-${Date.now()}`,
+      timestamp: new Date()
+    };
+    setCryptoBoxes(prevBoxes => [newCryptoBox, ...prevBoxes.slice(0, 49)]);
+    
+    // Add a success log entry
+    addLog({
+      message: `Добыт криптобокс: ${cryptoBox.coinName} (${cryptoBox.amount})`,
+      status: "success",
+      accountId: cryptoBox.accountId
+    });
+    
+    // Show toast notification
+    toast({
+      title: "Криптобокс активирован",
+      description: `${cryptoBox.coinName}: ${cryptoBox.amount} получено`,
+      variant: "default",
+    });
+  };
+
   const contextValue: AppContextType = {
     currentState,
     setCurrentState,
@@ -254,7 +296,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     settings,
     updateSettings,
     isRunning,
-    toggleRunning
+    toggleRunning,
+    cryptoBoxes,
+    addCryptoBox
   };
 
   return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;

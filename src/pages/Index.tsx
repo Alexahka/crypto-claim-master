@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AppProvider, useApp } from '@/context/AppContext';
 import Layout from '@/components/Layout';
 import Welcome from '@/components/Welcome';
@@ -11,7 +11,27 @@ import Dashboard from '@/components/Dashboard';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AppContent = () => {
-  const { currentState } = useApp();
+  const { currentState, accounts, addCryptoBox, isRunning } = useApp();
+  
+  // Demo effect to simulate receiving crypto boxes (only for demonstration)
+  useEffect(() => {
+    if (isRunning && accounts.length > 0) {
+      const demoInterval = setInterval(() => {
+        const randomAccount = accounts[Math.floor(Math.random() * accounts.length)];
+        const coins = ["BTC", "ETH", "BNB", "SOL", "ADA", "DOT"];
+        const randomCoin = coins[Math.floor(Math.random() * coins.length)];
+        const randomAmount = (Math.random() * 0.1).toFixed(6);
+        
+        addCryptoBox({
+          coinName: randomCoin,
+          amount: parseFloat(randomAmount),
+          accountId: randomAccount.id
+        });
+      }, 20000); // Every 20 seconds
+      
+      return () => clearInterval(demoInterval);
+    }
+  }, [isRunning, accounts, addCryptoBox]);
   
   return (
     <Layout>

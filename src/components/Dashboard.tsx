@@ -5,6 +5,7 @@ import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import StatusIndicator from './StatusIndicator';
 import ActivityLog from './ActivityLog';
+import CryptoBoxes from './CryptoBoxes';
 import SettingsModal from './SettingsModal';
 import { Settings, Play, Pause, ArrowLeft } from 'lucide-react';
 
@@ -81,6 +82,11 @@ const Dashboard = () => {
           {/* Log panel - right column on large screens, bottom on small */}
           <div className="lg:col-span-3">
             <ActivityLog />
+          </div>
+
+          {/* CryptoBoxes panel - full width */}
+          <div className="col-span-1 lg:col-span-5">
+            <CryptoBoxes />
           </div>
         </div>
         
